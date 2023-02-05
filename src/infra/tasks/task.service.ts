@@ -8,7 +8,7 @@ export class TaskService {
 
   constructor(private readonly orderService: OrderService) {}
 
-  @Cron(CronExpression.EVERY_2_HOURS)
+  @Cron(CronExpression.EVERY_2_HOURS, { timeZone: 'America/Bahia' })
   async refreshOrderStatus() {
     this.logger.log('Refresh order status task init');
 
