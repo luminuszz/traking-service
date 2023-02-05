@@ -1,4 +1,5 @@
 import { Traking } from '@app/entities/traking.entity';
+import { ObjectId } from 'bson';
 
 interface OrderProps {
   recipient_id: string;
@@ -9,8 +10,6 @@ interface OrderProps {
   id?: string;
 }
 
-import { randomUUID } from 'node:crypto';
-
 export class Order {
   public readonly _id: string;
 
@@ -19,7 +18,7 @@ export class Order {
   private readonly update_at: Date | null;
 
   constructor(private readonly props: OrderProps, id?: string) {
-    this._id = id || randomUUID();
+    this._id = id || new ObjectId().toString('hex');
   }
 
   public get traking_code(): string {

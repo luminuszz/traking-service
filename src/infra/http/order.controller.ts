@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { OrderService } from '@app/services/order.service';
 
 @Controller('orders')
@@ -11,5 +11,10 @@ export class OrderController {
       recipient_id: '1',
       traking_code,
     });
+  }
+
+  @Get(':order_id')
+  async refreshOrderTraking(@Param('order_id') order_id: string) {
+    await this.orderService.refreshOrderTraking(order_id);
   }
 }

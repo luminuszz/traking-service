@@ -43,7 +43,7 @@ export class PrismaOrderRepository implements OrderRepository {
       },
     });
 
-    return PrismaOrderMapper.toDomain(order);
+    return order ? PrismaOrderMapper.toDomain(order) : null;
   }
 
   async updateOrder(order_id: string, order: Partial<Order>): Promise<void> {

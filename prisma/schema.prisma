@@ -25,11 +25,10 @@ model Order {
 }
 
 model Traking {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id                           String   @id @default(auto()) @map("_id") @db.ObjectId
+  order_id                     String   @db.ObjectId
+  recipient_traking_created_at DateTime
+  message                      String
 
   order Order @relation(fields: [order_id], references: [id])
-
-  order_id String @db.ObjectId
-
-  message String
 }
