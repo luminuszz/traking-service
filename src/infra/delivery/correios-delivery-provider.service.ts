@@ -6,6 +6,7 @@ import {
 import { Injectable } from '@nestjs/common';
 
 import * as correiosBrasil from 'correios-brasil';
+import { compareDesc, parseISO } from 'date-fns';
 
 @Injectable()
 export class CorreiosDeliveryProviderService
@@ -20,7 +21,9 @@ export class CorreiosDeliveryProviderService
       traking_code,
     ]);
 
-    const traking = response.eventos?.[0];
+    const [traking] = response.eventos?.sort((a, b) =>
+      compareDesc(parseISO(a.dtHrCriado), parseISO(b.dtHrCriado)),
+    );
 
     return {
       traking: {

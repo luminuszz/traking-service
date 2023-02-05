@@ -21,10 +21,9 @@ export class PrismaOrderRepository implements OrderRepository {
   }
 
   async save(order: Order): Promise<void> {
-    console.log({ order });
-
     await this.prismaService.order.create({
       data: {
+        id: order.id,
         isDelivered: order.isDeliveried,
         createdAt: order.created_at,
         traking_id: order.traking_code,
@@ -43,7 +42,7 @@ export class PrismaOrderRepository implements OrderRepository {
       },
     });
 
-    return order ? PrismaOrderMapper.toDomain(order) : null;
+    return order ? PrismaOrderMapper.toDomain(order, order.trakings) : null;
   }
 
   async updateOrder(order_id: string, order: Partial<Order>): Promise<void> {

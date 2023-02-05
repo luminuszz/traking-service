@@ -1,11 +1,10 @@
-import { randomUUID } from 'node:crypto';
-
 import { Order } from '@app/entities/order.entity';
+import { ObjectId } from 'bson';
 
 interface TrakingProps {
   order_id: string;
   message: string;
-  recipient_traking_created_at: Date | string;
+  recipient_traking_created_at: Date;
 }
 
 export class Traking {
@@ -14,7 +13,7 @@ export class Traking {
   public Order: Order;
 
   constructor(private readonly props: TrakingProps, id?: string) {
-    this._id = id || randomUUID();
+    this._id = id || new ObjectId().toString('hex');
   }
 
   public get id(): string {
@@ -29,7 +28,7 @@ export class Traking {
     return this.props.message;
   }
 
-  public get recipient_traking_created_at(): Date | string {
+  public get recipient_traking_created_at(): Date {
     return this.props.recipient_traking_created_at;
   }
 }

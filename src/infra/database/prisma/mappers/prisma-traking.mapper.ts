@@ -6,9 +6,7 @@ export class PrismaTrakingMapper {
   static toPrisma(traking: Traking): PrismaTraking {
     return {
       message: traking.message,
-      recipient_traking_created_at: new Date(
-        traking.recipient_traking_created_at,
-      ),
+      recipient_traking_created_at: traking.recipient_traking_created_at,
       order_id: traking.order_id,
       id: traking.id,
     };

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Traking } from '@app/entities/traking.entity';
 import { PrismaService } from '@infra/database/prisma/prisma.service';
 import { PrismaTrakingMapper } from '@infra/database/prisma/mappers/prisma-traking.mapper';
+import { compareDesc } from 'date-fns';
 
 @Injectable()
 export class PrismaTrakingRepository implements TrakingRepository {
@@ -13,9 +14,7 @@ export class PrismaTrakingRepository implements TrakingRepository {
       data: {
         order_id: traking.order_id,
         message: traking.message,
-        recipient_traking_created_at: new Date(
-          traking.recipient_traking_created_at,
-        ),
+        recipient_traking_created_at: traking.recipient_traking_created_at,
       },
     });
   }
@@ -23,9 +22,7 @@ export class PrismaTrakingRepository implements TrakingRepository {
   async saveManyTrakings(trakings: Traking[]): Promise<void> {
     const trakingsToSave = trakings.map((traking) => ({
       message: traking.message,
-      recipient_traking_created_at: new Date(
-        traking.recipient_traking_created_at,
-      ),
+      recipient_traking_created_at: traking.recipient_traking_created_at,
       order_id: traking.order_id,
     }));
 
@@ -37,18 +34,19 @@ export class PrismaTrakingRepository implements TrakingRepository {
   async findMoreRecentTrakingWithOrder_id(
     order_id: string,
   ): Promise<Traking | null> {
-    const [results] = await this.prisma.traking.findMany({
+    const results = await this.prisma.traking.findMany({
       where: {
-        order_id: order_id,
-        recipient_traking_created_at: {
-          lte: new Date(),
-        },
-      },
-      orderBy: {
-        recipient_traking_created_at: 'desc',
+        order_id,
       },
     });
 
-    return results ? PrismaTrakingMapper.toDomain(results) : null;
+    const [traking] = results.sort((a, b) =>
+      compareDesc(
+        a.recipient_traking_created_at,
+        b.recipient_traking_created_at,
+      ),
+    );
+
+    return traking ? PrismaTrakingMapper.toDomain(traking) : null;
   }
 }

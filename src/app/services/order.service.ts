@@ -5,8 +5,9 @@ import { OrderRepository } from '../contracts/order.repository';
 import { OrderAlreadyExistsError } from '@app/services/errors/order-already-exists.error';
 import { DeliveryServiceProvider } from '@app/contracts/traking-finder.provider';
 import { TrakingService } from '@app/services/traking.service';
-import { isAfter } from 'date-fns';
+import { isAfter, parseISO } from 'date-fns';
 import { Traking } from '@app/entities/traking.entity';
+import { MessagingService } from '@app/contracts/messaging.service';
 
 @Injectable()
 export class OrderService {
@@ -14,6 +15,7 @@ export class OrderService {
     private orderRepository: OrderRepository,
     private readonly deliveryServiceProvider: DeliveryServiceProvider,
     private readonly trakingService: TrakingService,
+    private readonly messagingService: MessagingService,
   ) {}
 
   public async createOrder({ recipient_id, traking_code }: CreateOrderDto) {
@@ -42,7 +44,7 @@ export class OrderService {
         (traking) =>
           new Traking({
             order_id: order.id,
-            recipient_traking_created_at: traking.date,
+            recipient_traking_created_at: this.parseDate(traking.date),
             message: traking.message,
           }),
       );
@@ -51,43 +53,42 @@ export class OrderService {
     }
   }
 
-  public async findOrderById(order_id: string): Promise<Order | undefined> {
-    return this.orderRepository.findOrderById(order_id);
-  }
-
   public async refreshOrderTraking(order_id: string): Promise<void> {
-    const { traking_code } = await this.orderRepository.findOrderById(order_id);
+    const order = await this.orderRepository.findOrderById(order_id);
 
     const { traking, isDelivered } =
       await this.deliveryServiceProvider.getMoreRecentTrakingOrder(
-        traking_code,
+        order.traking_code,
       );
 
     const moreRecentTraking =
-      await this.trakingService.findMoreRecentTrakingByOrderId(order_id);
-
-    console.log({
-      moreRecentTraking,
-    });
+      await this.trakingService.findMoreRecentTrakingByOrderId(order.id);
 
     if (moreRecentTraking) {
       const isNewTraking = isAfter(
-        new Date(moreRecentTraking.recipient_traking_created_at),
-        new Date(traking.date),
+        parseISO(traking.date),
+        moreRecentTraking.recipient_traking_created_at,
       );
 
       if (isNewTraking) {
         await this.trakingService.createTraking({
           order_id,
           message: traking.message,
-          recipient_traking_created_at: traking.date,
+          recipient_traking_created_at: parseISO(traking.date),
+        });
+
+        this.messagingService.updateOrderStatusTraking({
+          date: this.parseDate(traking.date),
+          message: traking.message,
+          recipient_id: order.recipient_id,
+          traking_code: order.traking_code,
         });
       }
     } else {
       await this.trakingService.createTraking({
         order_id,
         message: traking.message,
-        recipient_traking_created_at: traking.date,
+        recipient_traking_created_at: this.parseDate(traking.date),
       });
     }
 
@@ -96,5 +97,13 @@ export class OrderService {
         isDeliveried: true,
       });
     }
+  }
+
+  public async findOrderById(order_id: string): Promise<Order | undefined> {
+    return this.orderRepository.findOrderById(order_id);
+  }
+
+  private parseDate(value: string): Date {
+    return parseISO(value);
   }
 }

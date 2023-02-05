@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DeliveryServiceProvider } from '@app/contracts/traking-finder.provider';
-import { CorreiosDeliveryProviderService } from '@infra/traking/correios-delivery-provider.service';
+import { CorreiosDeliveryProviderService } from '@infra/delivery/correios-delivery-provider.service';
 
 @Module({
   providers: [
@@ -11,4 +11,4 @@ import { CorreiosDeliveryProviderService } from '@infra/traking/correios-deliver
   ],
   exports: [DeliveryServiceProvider],
 })
-export class TrakingModule {}
+export class DeliveryModule {}

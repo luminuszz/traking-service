@@ -10,8 +10,6 @@ export class PrismaOrderMapper {
     prismaOrder: PrismaOrder,
     trakings?: PrismaTrakings[],
   ): Order {
-    console.log('prismaOrder', prismaOrder);
-
     const domainOrder = new Order(
       {
         isDeliveried: prismaOrder.isDelivered,
