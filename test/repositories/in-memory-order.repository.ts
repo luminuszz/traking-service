@@ -13,4 +13,16 @@ export class InMemoryOrderRepository implements OrderRepository {
   ): Promise<Order | undefined> {
     return this.orders.find((item) => item.traking_code === traking_code);
   }
+
+  async findOrderById(order_id: string): Promise<Order | undefined> {
+    return this.orders.find((item) => item.id === order_id);
+  }
+
+  async updateOrder(order_id: string, order: Partial<Order>): Promise<void> {
+    const orderIndex = this.orders.findIndex((item) => item.id === order_id);
+
+    this.orders[orderIndex] = Object.assign(this.orders[orderIndex], {
+      ...order,
+    });
+  }
 }

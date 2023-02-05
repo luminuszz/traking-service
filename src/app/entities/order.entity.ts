@@ -1,9 +1,12 @@
+import { Traking } from '@app/entities/traking.entity';
+
 interface OrderProps {
   recipient_id: string;
   traking_code: string;
   created_at: Date;
   updated_at: Date | null;
   isDeliveried: boolean;
+  id?: string;
 }
 
 import { randomUUID } from 'node:crypto';
@@ -50,4 +53,14 @@ export class Order {
   public set isDeliveried(value: boolean) {
     this.props.isDeliveried = value;
   }
+
+  public get updated_at() {
+    return this.props.updated_at;
+  }
+
+  public set updatet_at(value: Date) {
+    this.props.updated_at = value;
+  }
+
+  public trakings: Traking[];
 }
