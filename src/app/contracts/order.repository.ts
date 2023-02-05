@@ -10,4 +10,6 @@ export abstract class OrderRepository {
   abstract findOrderById(order_id: string): Promise<Order | undefined>;
 
   abstract updateOrder(order_id: string, order: Partial<Order>): Promise<void>;
+
+  abstract findAllOrdersWithIsDeliveryFalse(): Promise<Order[]>;
 }

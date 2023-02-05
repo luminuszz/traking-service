@@ -59,4 +59,14 @@ export class PrismaOrderRepository implements OrderRepository {
       },
     });
   }
+
+  async findAllOrdersWithIsDeliveryFalse(): Promise<Order[]> {
+    const orders = await this.prismaService.order.findMany({
+      where: {
+        isDelivered: false,
+      },
+    });
+
+    return orders.map((order) => PrismaOrderMapper.toDomain(order));
+  }
 }

@@ -106,4 +106,8 @@ export class OrderService {
   private parseDate(value: string): Date {
     return parseISO(value);
   }
+
+  async findAllOrdersThatNotHaveBeenDelivered(): Promise<Order[]> {
+    return await this.orderRepository.findAllOrdersWithIsDeliveryFalse();
+  }
 }
