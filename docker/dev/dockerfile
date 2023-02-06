@@ -1,6 +1,6 @@
 FROM node:alpine
 
-WORKDIR /app/traking-service
+WORKDIR /app
 
 COPY ../../package.json .
 
