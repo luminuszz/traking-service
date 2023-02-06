@@ -1,7 +1,5 @@
 FROM node:alpine
 
-WORKDIR /app/traking-service
-
 COPY ../../package.json .
 
 COPY ../../yarn.lock .
