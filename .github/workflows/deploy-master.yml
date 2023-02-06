@@ -20,5 +20,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            cd apps/traking-service && git pull origin master &&  docker compose --build -d
+            cd apps/traking-service && git pull origin master &&  docker compose up --build -d
             
