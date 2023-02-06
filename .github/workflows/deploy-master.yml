@@ -1,0 +1,25 @@
+name: "Deploy master"
+
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build_and_deploy:
+    name: "Build and deploy"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+      - name: deploy to cloud
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            cd apps/traking-service
+            git pull origin master
+            docker compose --build -d
