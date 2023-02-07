@@ -3,7 +3,7 @@ import { Traking } from '@app/entities/traking.entity';
 import { compareDesc } from 'date-fns';
 
 export class InMemoryTrakingRepository implements TrakingRepository {
-  private trackings: Traking[] = [];
+  public trackings: Traking[] = [];
 
   async save(traking: Traking): Promise<void> {
     this.trackings.push(traking);

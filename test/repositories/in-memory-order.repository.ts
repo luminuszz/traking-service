@@ -2,7 +2,7 @@ import { OrderRepository } from '@app/contracts/order.repository';
 import { Order } from '@app/entities/order.entity';
 
 export class InMemoryOrderRepository implements OrderRepository {
-  private orders: Order[] = [];
+  public orders: Order[] = [];
 
   async save(order: Order): Promise<void> {
     this.orders.push(order);
@@ -24,5 +24,9 @@ export class InMemoryOrderRepository implements OrderRepository {
     this.orders[orderIndex] = Object.assign(this.orders[orderIndex], {
       ...order,
     });
+  }
+
+  async findAllOrdersWithIsDeliveryFalse(): Promise<Order[]> {
+    return this.orders.filter((item) => item.isDeliveried === false);
   }
 }

@@ -25,9 +25,16 @@ export class CorreiosDeliveryProviderService
       compareDesc(parseISO(a.dtHrCriado), parseISO(b.dtHrCriado)),
     );
 
+    const message = `
+        ${traking.descricao}
+        ${traking.unidade?.endereco?.cidade || ''} - ${
+      traking?.unidade?.endereco?.uf || ''
+    }
+    `;
+
     return {
       traking: {
-        message: traking.descricao,
+        message,
         date: traking.dtHrCriado,
       },
 
