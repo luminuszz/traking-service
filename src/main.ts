@@ -2,8 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
-import { ValidationPipe } from '@nestjs/common';
-
 (async () => {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
@@ -11,9 +9,12 @@ import { ValidationPipe } from '@nestjs/common';
       transport: Transport.KAFKA,
       options: {
         client: {
-          clientId: 'traking-service-client',
+          clientId: 'traking-service',
+
           retry: {
-            retries: 2,
+            retries: 5,
+            maxRetryTime: 5000,
+            multiplier: 2,
           },
 
           brokers: [process.env.KAFKA_CONECT_URL],
@@ -25,10 +26,5 @@ import { ValidationPipe } from '@nestjs/common';
       },
     },
   );
-
-  app.useGlobalPipes(
-    new ValidationPipe({ stopAtFirstError: true, transform: true }),
-  );
-
   await app.listen();
 })();

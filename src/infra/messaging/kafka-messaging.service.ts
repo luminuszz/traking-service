@@ -4,12 +4,12 @@ import {
   UpdateOrderStatusTrakingEvent,
 } from '@app/contracts/messaging.service';
 import { ConfigService } from '@nestjs/config';
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 @Injectable()
 export class KafkaMessagingService
   extends ClientKafka
-  implements MessagingService, OnModuleInit
+  implements MessagingService
 {
   public logger = new Logger(KafkaMessagingService.name);
 
@@ -33,10 +33,6 @@ export class KafkaMessagingService
         groupId: 'traking-service-consumer',
       },
     });
-  }
-
-  async onModuleInit() {
-    await this.connect();
   }
 
   updateOrderStatusTraking(payload: UpdateOrderStatusTrakingEvent) {
