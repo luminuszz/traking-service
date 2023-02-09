@@ -18,7 +18,11 @@ export class OrderService {
     private readonly messagingService: MessagingService,
   ) {}
 
-  public async createOrder({ recipient_id, traking_code }: CreateOrderDto) {
+  public async createOrder({
+    recipient_id,
+    traking_code,
+    name,
+  }: CreateOrderDto) {
     const orderWithTrakingCodeAlreadyExists =
       await this.orderRepository.findOrderByTrakingCode(traking_code);
 
@@ -30,6 +34,7 @@ export class OrderService {
       updated_at: null,
       created_at: new Date(),
       isDeliveried: false,
+      name,
     });
 
     await this.orderRepository.save(order);

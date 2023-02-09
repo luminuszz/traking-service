@@ -17,6 +17,7 @@ export class PrismaOrderMapper {
         traking_code: prismaOrder.traking_id,
         updated_at: prismaOrder.updatedAt,
         recipient_id: prismaOrder.recipient_id,
+        name: prismaOrder?.name,
       },
       prismaOrder.id,
     );
@@ -47,6 +48,7 @@ export class PrismaOrderMapper {
       traking_id: order.traking_code,
       isDelivered: order.isDeliveried,
       recipient_id: order.recipient_id,
+      name: order?.name,
     } satisfies PrismaOrder;
   }
 }

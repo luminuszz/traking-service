@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateOrderDto {
   @IsString()
@@ -8,4 +8,8 @@ export class CreateOrderDto {
   @IsString()
   @IsNotEmpty()
   traking_code: string;
+
+  @IsString()
+  @IsOptional()
+  name?: string;
 }

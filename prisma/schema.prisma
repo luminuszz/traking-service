@@ -15,6 +15,7 @@ model Order {
   traking_id   String  @unique
   recipient_id String  @unique
   isDelivered  Boolean @default(false)
+  name         String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -8,10 +8,13 @@ export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Post()
-  async createOder(@Body() { traking_code, recipient_id }: CreateOrderDto) {
+  async createOder(
+    @Body() { traking_code, recipient_id, name }: CreateOrderDto,
+  ) {
     await this.orderService.createOrder({
       recipient_id,
       traking_code,
+      name,
     });
   }
 

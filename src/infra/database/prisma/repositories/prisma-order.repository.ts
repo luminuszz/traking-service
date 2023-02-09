@@ -28,6 +28,7 @@ export class PrismaOrderRepository implements OrderRepository {
         createdAt: order.created_at,
         traking_id: order.traking_code,
         recipient_id: order.recipient_id,
+        name: order?.name,
       },
     });
   }

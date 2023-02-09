@@ -8,6 +8,7 @@ interface OrderProps {
   updated_at: Date | null;
   isDeliveried: boolean;
   id?: string;
+  name?: string;
 }
 
 export class Order {
@@ -59,6 +60,14 @@ export class Order {
 
   public set updatet_at(value: Date) {
     this.props.updated_at = value;
+  }
+
+  public get name() {
+    return this.props.name;
+  }
+
+  public set name(value: string) {
+    this.props.name = value;
   }
 
   public trakings: Traking[];
