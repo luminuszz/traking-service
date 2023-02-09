@@ -15,6 +15,8 @@ export class TaskService {
     const orders =
       await this.orderService.findAllOrdersThatNotHaveBeenDelivered();
 
+    if (!orders.length) return this.logger.log('No orders to update');
+
     for (const order of orders) {
       await this.orderService.refreshOrderTraking(order.id);
     }
