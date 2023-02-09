@@ -39,12 +39,9 @@ export class CorreiosDeliveryProviderService
     );
 
     const message = `${traking.descricao}
-       
-        
       ${traking.unidade?.endereco?.cidade || ''} - ${
       traking?.unidade?.endereco?.uf || ''
     }
-      
     `;
 
     return {

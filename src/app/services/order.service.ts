@@ -76,12 +76,6 @@ export class OrderService {
       );
 
       if (isNewTraking) {
-        await this.trakingService.createTraking({
-          order_id,
-          message: traking.message,
-          recipient_traking_created_at: parseISO(traking.date),
-        });
-
         this.messagingService.updateOrderStatusTraking({
           date: this.parseDate(traking.date),
           message: traking.message,
@@ -95,6 +89,14 @@ export class OrderService {
         order_id,
         message: traking.message,
         recipient_traking_created_at: this.parseDate(traking.date),
+      });
+
+      this.messagingService.updateOrderStatusTraking({
+        date: this.parseDate(traking.date),
+        message: traking.message,
+        recipient_id: order.recipient_id,
+        traking_code: order.traking_code,
+        name: order?.name,
       });
     }
 
