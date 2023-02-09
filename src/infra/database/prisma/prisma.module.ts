@@ -4,6 +4,8 @@ import { PrismaOrderRepository } from '@infra/database/prisma/repositories/prism
 import { OrderRepository } from '@app/contracts/order.repository';
 import { TrakingRepository } from '@app/contracts/traking.repository';
 import { PrismaTrakingRepository } from '@infra/database/prisma/repositories/prisma-traking.repository';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { PrismaErrorInterceptor } from '@infra/database/prisma/prisma-error.interceptor';
 
 @Module({
   providers: [
@@ -15,6 +17,10 @@ import { PrismaTrakingRepository } from '@infra/database/prisma/repositories/pri
     {
       provide: TrakingRepository,
       useClass: PrismaTrakingRepository,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: PrismaErrorInterceptor,
     },
   ],
   exports: [PrismaService, OrderRepository, TrakingRepository],

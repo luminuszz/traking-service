@@ -32,12 +32,12 @@ export class OrderService {
       isDeliveried: false,
     });
 
+    await this.orderRepository.save(order);
+
     const hasTrakings =
       await this.deliveryServiceProvider.getAllTrakingByTrakingCode(
         order.traking_code,
       );
-
-    await this.orderRepository.save(order);
 
     if (hasTrakings.length) {
       const trakings = hasTrakings.map(

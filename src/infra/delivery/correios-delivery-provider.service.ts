@@ -8,6 +8,19 @@ import { Injectable } from '@nestjs/common';
 import * as correiosBrasil from 'correios-brasil';
 import { compareDesc, parseISO } from 'date-fns';
 
+type TrakingOrderResponseDto = {
+  eventos: {
+    dtHrCriado: string;
+    descricao: string;
+    unidade: {
+      endereco: {
+        cidade: string;
+        uf: string;
+      };
+    };
+  }[];
+};
+
 @Injectable()
 export class CorreiosDeliveryProviderService
   implements DeliveryServiceProvider
@@ -17,9 +30,9 @@ export class CorreiosDeliveryProviderService
   async getMoreRecentTrakingOrder(
     traking_code: string,
   ): Promise<TrakingWithStatus> {
-    const [response] = await this.correiosBrasilProvider.rastrearEncomendas([
+    const [response] = (await this.correiosBrasilProvider.rastrearEncomendas([
       traking_code,
-    ]);
+    ])) as TrakingOrderResponseDto[];
 
     const [traking] = response.eventos?.sort((a, b) =>
       compareDesc(parseISO(a.dtHrCriado), parseISO(b.dtHrCriado)),
