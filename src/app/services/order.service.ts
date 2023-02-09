@@ -87,6 +87,7 @@ export class OrderService {
           message: traking.message,
           recipient_id: order.recipient_id,
           traking_code: order.traking_code,
+          name: order?.name,
         });
       }
     } else {

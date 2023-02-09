@@ -3,6 +3,7 @@ export interface UpdateOrderStatusTrakingEvent {
   message: string;
   date: Date;
   recipient_id: string;
+  name?: string;
 }
 
 export abstract class MessagingService {
