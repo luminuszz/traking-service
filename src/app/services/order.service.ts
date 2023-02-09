@@ -118,4 +118,8 @@ export class OrderService {
   async findAllOrdersThatNotHaveBeenDelivered(): Promise<Order[]> {
     return await this.orderRepository.findAllOrdersWithIsDeliveryFalse();
   }
+
+  async findAllOrders(): Promise<Order[]> {
+    return this.orderRepository.findAllOrders();
+  }
 }

@@ -70,4 +70,10 @@ export class PrismaOrderRepository implements OrderRepository {
 
     return orders.map((order) => PrismaOrderMapper.toDomain(order));
   }
+
+  async findAllOrders(): Promise<Order[]> {
+    const orders = await this.prismaService.order.findMany();
+
+    return orders.map((order) => PrismaOrderMapper.toDomain(order));
+  }
 }
