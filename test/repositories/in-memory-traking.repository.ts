@@ -5,6 +5,10 @@ import { compareDesc } from 'date-fns';
 export class InMemoryTrakingRepository implements TrakingRepository {
   public trackings: Traking[] = [];
 
+  constructor() {
+    this.trackings = [];
+  }
+
   async save(traking: Traking): Promise<void> {
     this.trackings.push(traking);
   }

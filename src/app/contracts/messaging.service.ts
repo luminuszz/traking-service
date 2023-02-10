@@ -7,5 +7,5 @@ export interface UpdateOrderStatusTrakingEvent {
 }
 
 export abstract class MessagingService {
-  abstract updateOrderStatusTraking(payload: UpdateOrderStatusTrakingEvent);
+  abstract dispatchNewTrakingAddedEvent(payload: UpdateOrderStatusTrakingEvent);
 }

@@ -6,8 +6,7 @@ interface OrderProps {
   traking_code: string;
   created_at: Date;
   updated_at: Date | null;
-  isDeliveried: boolean;
-  id?: string;
+  isDelivered: boolean;
   name?: string;
 }
 
@@ -46,19 +45,19 @@ export class Order {
     return this._id;
   }
 
-  public get isDeliveried(): boolean {
-    return this.props.isDeliveried;
+  public get isDelivered(): boolean {
+    return this.props.isDelivered;
   }
 
-  public set isDeliveried(value: boolean) {
-    this.props.isDeliveried = value;
+  public set isDelivered(value: boolean) {
+    this.props.isDelivered = value;
   }
 
   public get updated_at() {
     return this.props.updated_at;
   }
 
-  public set updatet_at(value: Date) {
+  public set updated_at(value: Date) {
     this.props.updated_at = value;
   }
 

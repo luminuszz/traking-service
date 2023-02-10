@@ -29,10 +29,12 @@ export class CorreiosDeliveryProviderService
 
   async getMoreRecentTrakingOrder(
     traking_code: string,
-  ): Promise<TrakingWithStatus> {
+  ): Promise<TrakingWithStatus | null> {
     const [response] = (await this.correiosBrasilProvider.rastrearEncomendas([
       traking_code,
     ])) as TrakingOrderResponseDto[];
+
+    if (!response?.eventos?.length) return null;
 
     const [traking] = response.eventos?.sort((a, b) =>
       compareDesc(parseISO(a.dtHrCriado), parseISO(b.dtHrCriado)),
@@ -47,7 +49,7 @@ export class CorreiosDeliveryProviderService
     return {
       traking: {
         message,
-        date: traking.dtHrCriado,
+        date: parseISO(traking.dtHrCriado),
       },
 
       isDelivered: traking.descricao === 'Objeto entregue ao destinatário',
@@ -64,7 +66,7 @@ export class CorreiosDeliveryProviderService
     return (
       response?.eventos?.map((traking) => ({
         message: traking.descricao,
-        date: traking.dtHrCriado,
+        date: parseISO(traking.dtHrCriado),
       })) || []
     );
   }

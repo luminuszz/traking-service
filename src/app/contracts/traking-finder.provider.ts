@@ -1,20 +1,20 @@
 export interface TrakingWithStatus {
   traking: {
     message: string;
-    date: string;
+    date: Date;
   };
   isDelivered: boolean;
 }
 
 export interface DeliveryTraking {
   message: string;
-  date: string;
+  date: Date;
 }
 
 export abstract class DeliveryServiceProvider {
   abstract getMoreRecentTrakingOrder(
     traking_code: string,
-  ): Promise<TrakingWithStatus>;
+  ): Promise<TrakingWithStatus | null>;
 
   abstract getAllTrakingByTrakingCode(
     traking_code: string,

@@ -27,6 +27,10 @@ export class InMemoryOrderRepository implements OrderRepository {
   }
 
   async findAllOrdersWithIsDeliveryFalse(): Promise<Order[]> {
-    return this.orders.filter((item) => item.isDeliveried === false);
+    return this.orders.filter((item) => item.isDelivered === false);
+  }
+
+  async findAllOrders(): Promise<Order[]> {
+    return this.orders;
   }
 }

@@ -28,6 +28,10 @@ export class OrderController {
 
   @MessagePattern('traking.find-all-orders')
   async findAllOrdersNotDelivered() {
-    return this.orderService.findAllOrders();
+    const response = await this.orderService.findAllOrders();
+
+    console.log(response[0]);
+
+    return response;
   }
 }

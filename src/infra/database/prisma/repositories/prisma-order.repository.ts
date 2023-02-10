@@ -24,7 +24,7 @@ export class PrismaOrderRepository implements OrderRepository {
     await this.prismaService.order.create({
       data: {
         id: order.id,
-        isDelivered: order.isDeliveried,
+        isDelivered: order.isDelivered,
         createdAt: order.created_at,
         traking_id: order.traking_code,
         recipient_id: order.recipient_id,
@@ -52,7 +52,7 @@ export class PrismaOrderRepository implements OrderRepository {
         id: order_id,
       },
       data: {
-        isDelivered: order?.isDeliveried,
+        isDelivered: order?.isDelivered,
         recipient_id: order?.recipient_id,
         updatedAt: order?.updated_at,
         createdAt: order?.created_at,
@@ -77,8 +77,6 @@ export class PrismaOrderRepository implements OrderRepository {
         trakings: true,
       },
     });
-
-    console.log(orders[0]);
 
     return orders.map((order) =>
       PrismaOrderMapper.toDomain(order, order.trakings),

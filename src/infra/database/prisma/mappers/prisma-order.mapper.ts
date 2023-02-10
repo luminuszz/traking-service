@@ -12,7 +12,7 @@ export class PrismaOrderMapper {
   ): Order {
     const domainOrder = new Order(
       {
-        isDeliveried: prismaOrder.isDelivered,
+        isDelivered: prismaOrder.isDelivered,
         created_at: prismaOrder.createdAt,
         traking_code: prismaOrder.traking_id,
         updated_at: prismaOrder.updatedAt,
@@ -46,7 +46,7 @@ export class PrismaOrderMapper {
       updatedAt: order.updated_at,
       createdAt: order.created_at,
       traking_id: order.traking_code,
-      isDelivered: order.isDeliveried,
+      isDelivered: order.isDelivered,
       recipient_id: order.recipient_id,
       name: order?.name,
     } satisfies PrismaOrder;

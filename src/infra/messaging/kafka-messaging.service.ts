@@ -35,7 +35,7 @@ export class KafkaMessagingService
     });
   }
 
-  updateOrderStatusTraking(payload: UpdateOrderStatusTrakingEvent) {
+  dispatchNewTrakingAddedEvent(payload: UpdateOrderStatusTrakingEvent) {
     this.emit('notification.update-order-status', payload);
   }
 }

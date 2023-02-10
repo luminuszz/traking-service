@@ -8,6 +8,7 @@ import { TrakingService } from '@app/services/traking.service';
 import { isAfter, parseISO } from 'date-fns';
 import { Traking } from '@app/entities/traking.entity';
 import { MessagingService } from '@app/contracts/messaging.service';
+import { OrderNotFoundError } from '@app/services/errors/order-not-found.error';
 
 @Injectable()
 export class OrderService {
@@ -33,7 +34,7 @@ export class OrderService {
       traking_code,
       updated_at: null,
       created_at: new Date(),
-      isDeliveried: false,
+      isDelivered: false,
       name,
     });
 
@@ -49,7 +50,7 @@ export class OrderService {
         (traking) =>
           new Traking({
             order_id: order.id,
-            recipient_traking_created_at: this.parseDate(traking.date),
+            recipient_traking_created_at: traking.date,
             message: traking.message,
           }),
       );
@@ -61,49 +62,68 @@ export class OrderService {
   public async refreshOrderTraking(order_id: string): Promise<void> {
     const order = await this.orderRepository.findOrderById(order_id);
 
-    const { traking, isDelivered } =
+    if (!order) throw new OrderNotFoundError();
+
+    const lastTrakingRegistredByDeliveryProvider =
       await this.deliveryServiceProvider.getMoreRecentTrakingOrder(
         order.traking_code,
       );
 
-    const moreRecentTraking =
+    if (!lastTrakingRegistredByDeliveryProvider) return;
+
+    const lastTrakingRegistredByOrderId =
       await this.trakingService.findMoreRecentTrakingByOrderId(order.id);
 
-    if (moreRecentTraking) {
-      const isNewTraking = isAfter(
-        parseISO(traking.date),
-        moreRecentTraking.recipient_traking_created_at,
-      );
+    const { traking, isDelivered } = lastTrakingRegistredByDeliveryProvider;
 
-      if (isNewTraking) {
-        this.messagingService.updateOrderStatusTraking({
-          date: this.parseDate(traking.date),
-          message: traking.message,
-          recipient_id: order.recipient_id,
-          traking_code: order.traking_code,
-          name: order?.name,
-        });
-      }
-    } else {
+    if (!lastTrakingRegistredByOrderId) {
       await this.trakingService.createTraking({
         order_id,
         message: traking.message,
-        recipient_traking_created_at: this.parseDate(traking.date),
+        recipient_traking_created_at: traking.date,
       });
 
-      this.messagingService.updateOrderStatusTraking({
-        date: this.parseDate(traking.date),
+      this.messagingService.dispatchNewTrakingAddedEvent({
+        date: traking.date,
         message: traking.message,
         recipient_id: order.recipient_id,
         traking_code: order.traking_code,
         name: order?.name,
       });
-    }
 
-    if (isDelivered) {
-      await this.orderRepository.updateOrder(order_id, {
-        isDeliveried: true,
+      if (isDelivered) {
+        await this.orderRepository.updateOrder(order_id, {
+          isDelivered: true,
+        });
+      }
+
+      return;
+    }
+    const isNewTraking = isAfter(
+      lastTrakingRegistredByDeliveryProvider.traking.date,
+      lastTrakingRegistredByOrderId.recipient_traking_created_at,
+    );
+
+    if (isNewTraking) {
+      await this.trakingService.createTraking({
+        order_id,
+        message: traking.message,
+        recipient_traking_created_at: traking.date,
       });
+
+      this.messagingService.dispatchNewTrakingAddedEvent({
+        date: traking.date,
+        message: traking.message,
+        recipient_id: order.recipient_id,
+        traking_code: order.traking_code,
+        name: order?.name,
+      });
+
+      if (isDelivered) {
+        await this.orderRepository.updateOrder(order_id, {
+          isDelivered: true,
+        });
+      }
     }
   }
 
@@ -111,12 +131,8 @@ export class OrderService {
     return this.orderRepository.findOrderById(order_id);
   }
 
-  private parseDate(value: string): Date {
-    return parseISO(value);
-  }
-
   async findAllOrdersThatNotHaveBeenDelivered(): Promise<Order[]> {
-    return await this.orderRepository.findAllOrdersWithIsDeliveryFalse();
+    return this.orderRepository.findAllOrdersWithIsDeliveryFalse();
   }
 
   async findAllOrders(): Promise<Order[]> {
