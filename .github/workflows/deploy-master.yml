@@ -9,11 +9,18 @@ on:
 jobs:
   validate_tests:
     name: "Validate and test"
-    runs-on: node-latest
+    runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
         uses: actions/checkout@v3
-      - name: "Test"
+      - name: "Setup node action"
+        uses: actions/setup-node@v3
+        with:
+          node-version: "latest"
+      - name: "Install dependencies"
+        run: |
+          npm ci
+      - name: "Run tests"
         run: |
           npm run coverage
 
