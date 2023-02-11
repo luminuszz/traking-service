@@ -8,6 +8,7 @@ COPY ../../yarn.lock .
 
 RUN yarn install
 
+RUN yarn global add pm2
 
 COPY ../../. .
 
@@ -17,4 +18,4 @@ RUN yarn build
 
 VOLUME ["/app/dist"]
 
-CMD ["node", "dist/src/main.js"]
+CMD ["pm2-runtime", "dist/src/main.js"]
