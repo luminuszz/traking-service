@@ -13,7 +13,7 @@ datasource db {
 model Order {
   id           String  @id @default(auto()) @map("_id") @db.ObjectId
   traking_id   String  @unique
-  recipient_id String  @unique
+  recipient_id String
   isDelivered  Boolean @default(false)
   name         String?
 
