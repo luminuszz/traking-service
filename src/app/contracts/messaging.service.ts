@@ -1,11 +1,5 @@
-export interface UpdateOrderStatusTrakingEvent {
-  traking_code: string;
-  message: string;
-  date: Date;
-  recipient_id: string;
-  name?: string;
-}
+import { EventBus } from '@app/events/event';
 
 export abstract class MessagingService {
-  abstract dispatchNewTrakingAddedEvent(payload: UpdateOrderStatusTrakingEvent);
+  abstract dispatch(event: EventBus<unknown>);
 }

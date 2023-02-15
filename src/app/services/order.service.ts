@@ -9,6 +9,7 @@ import { isAfter } from 'date-fns';
 import { Traking } from '@app/entities/traking.entity';
 import { MessagingService } from '@app/contracts/messaging.service';
 import { OrderNotFoundError } from '@app/services/errors/order-not-found.error';
+import { NewTrakingCreatedEvent } from '@app/events/new-traking-created.event';
 
 @Injectable()
 export class OrderService {
@@ -75,54 +76,59 @@ export class OrderService {
 
     const { traking, isDelivered } = lastTrakingRegistredByDeliveryProvider;
 
-    if (!lastTrakingRegistredByOrderId) {
-      await this.trakingService.createTraking({
-        order_id,
-        message: traking.message,
-        recipient_traking_created_at: traking.date,
-      });
+    if (lastTrakingRegistredByOrderId) {
+      const isNewTraking = isAfter(
+        lastTrakingRegistredByDeliveryProvider.traking.date,
+        lastTrakingRegistredByOrderId.recipient_traking_created_at,
+      );
 
-      this.messagingService.dispatchNewTrakingAddedEvent({
-        date: traking.date,
-        message: traking.message,
-        recipient_id: order.recipient_id,
-        traking_code: order.traking_code,
-        name: order?.name,
-      });
-
-      if (isDelivered) {
-        await this.orderRepository.updateOrder(order_id, {
-          isDelivered: true,
+      if (isNewTraking) {
+        await this.trakingService.createTraking({
+          order_id,
+          message: traking.message,
+          recipient_traking_created_at: traking.date,
         });
+
+        this.messagingService.dispatch(
+          new NewTrakingCreatedEvent({
+            date: traking.date,
+            message: traking.message,
+            recipient_id: order.recipient_id,
+            traking_code: order.traking_code,
+            name: order?.name,
+          }),
+        );
+
+        if (isDelivered) {
+          await this.orderRepository.updateOrder(order_id, {
+            isDelivered: true,
+          });
+        }
       }
 
       return;
     }
-    const isNewTraking = isAfter(
-      lastTrakingRegistredByDeliveryProvider.traking.date,
-      lastTrakingRegistredByOrderId.recipient_traking_created_at,
-    );
 
-    if (isNewTraking) {
-      await this.trakingService.createTraking({
-        order_id,
-        message: traking.message,
-        recipient_traking_created_at: traking.date,
-      });
+    await this.trakingService.createTraking({
+      order_id,
+      message: traking.message,
+      recipient_traking_created_at: traking.date,
+    });
 
-      this.messagingService.dispatchNewTrakingAddedEvent({
+    this.messagingService.dispatch(
+      new NewTrakingCreatedEvent({
         date: traking.date,
         message: traking.message,
         recipient_id: order.recipient_id,
         traking_code: order.traking_code,
         name: order?.name,
-      });
+      }),
+    );
 
-      if (isDelivered) {
-        await this.orderRepository.updateOrder(order_id, {
-          isDelivered: true,
-        });
-      }
+    if (isDelivered) {
+      await this.orderRepository.updateOrder(order_id, {
+        isDelivered: true,
+      });
     }
   }
 
