@@ -7,8 +7,8 @@ on:
       - master
 
 jobs:
-  validate_tests:
-    name: "Validate and test"
+  validate_aplication_status:
+    name: "Validate application status"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
@@ -20,6 +20,9 @@ jobs:
       - name: "Install dependencies"
         run: |
           yarn install
+      - name: "Build"
+        run: |
+          yarn build
       - name: "Run tests"
         run: |
           yarn coverage
