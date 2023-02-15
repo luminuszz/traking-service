@@ -27,7 +27,7 @@ const fakeDeliveryServiceProvider: DeliveryServiceProvider = {
 };
 
 const fakerMessagingService: MessagingService = {
-  dispatchNewTrakingAddedEvent(payload: any) {
+  dispatch(payload: any) {
     return Promise.resolve();
   },
 };

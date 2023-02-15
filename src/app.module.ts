@@ -8,8 +8,8 @@ import { TcpModule } from '@infra/tcp/tcp.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    TaskModule,
     ScheduleModule.forRoot(),
+    TaskModule,
     TcpModule,
   ],
   controllers: [],

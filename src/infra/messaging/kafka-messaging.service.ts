@@ -1,10 +1,8 @@
 import { ClientKafka } from '@nestjs/microservices';
-import {
-  MessagingService,
-  UpdateOrderStatusTrakingEvent,
-} from '@app/contracts/messaging.service';
+import { MessagingService } from '@app/contracts/messaging.service';
 import { ConfigService } from '@nestjs/config';
 import { Injectable, Logger } from '@nestjs/common';
+import { EventBus } from '@app/events/event';
 
 @Injectable()
 export class KafkaMessagingService
@@ -35,7 +33,7 @@ export class KafkaMessagingService
     });
   }
 
-  dispatchNewTrakingAddedEvent(payload: UpdateOrderStatusTrakingEvent) {
-    this.emit('notification.update-order-status', payload);
+  dispatch(event: EventBus<unknown>) {
+    this.send(event.eventName, event.payload);
   }
 }
