@@ -147,8 +147,8 @@ describe('OrderService', () => {
         updated_at: faker.datatype.datetime(),
       };
 
-      const order = new Order({ ...createOderDto, isDelivered: false });
-      const order2 = new Order({ ...createOderDto, isDelivered: true });
+      const order = Order.create({ ...createOderDto, isDelivered: false });
+      const order2 = Order.create({ ...createOderDto, isDelivered: true });
 
       await orderRepository.save(order);
       await orderRepository.save(order2);
@@ -231,7 +231,7 @@ describe('OrderService', () => {
 
       const order_id = faker.database.mongodbObjectId();
 
-      const order = new Order(
+      const order = Order.create(
         {
           updated_at: faker.datatype.datetime(),
           traking_code: faker.datatype.uuid(),
