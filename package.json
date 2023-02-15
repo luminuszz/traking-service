@@ -31,6 +31,7 @@
     "correios-brasil": "^3.0.4",
     "date-fns": "^2.29.3",
     "date-fns-tz": "^2.0.0",
+    "husky": "^8.0.3",
     "kafkajs": "^2.2.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
@@ -66,21 +67,9 @@
     "vite-tsconfig-paths": "^4.0.5",
     "vitest": "^0.28.4"
   },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
-    },
-    "collectCoverageFrom": [
-      "**/*.service.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }

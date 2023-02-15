@@ -4,7 +4,7 @@ import { faker } from '@faker-js/faker';
 
 describe('Order', () => {
   it('should be able to create a new order', () => {
-    const order = new Order({
+    const order = Order.create({
       isDelivered: false,
       created_at: new Date(),
       traking_code: '123456789',
@@ -35,7 +35,7 @@ describe('Order', () => {
   it('should be able to create order with id ', () => {
     const id = faker.database.mongodbObjectId();
 
-    const order = new Order(
+    const order = Order.create(
       {
         isDelivered: false,
         created_at: new Date(),

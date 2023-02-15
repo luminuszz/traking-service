@@ -10,7 +10,7 @@ export class PrismaOrderMapper {
     prismaOrder: PrismaOrder,
     trakings?: PrismaTrakings[],
   ): Order {
-    const domainOrder = new Order(
+    const domainOrder = Order.create(
       {
         isDelivered: prismaOrder.isDelivered,
         created_at: prismaOrder.createdAt,
@@ -23,17 +23,15 @@ export class PrismaOrderMapper {
     );
 
     if (trakings) {
-      domainOrder.trakings = trakings.map<Traking>(
-        (traking) =>
-          new Traking(
-            {
-              order_id: traking.order_id,
-              message: traking.message,
-              recipient_traking_created_at:
-                traking.recipient_traking_created_at,
-            },
-            traking.id,
-          ),
+      domainOrder.trakings = trakings.map<Traking>((traking) =>
+        Traking.create(
+          {
+            order_id: traking.order_id,
+            message: traking.message,
+            recipient_traking_created_at: traking.recipient_traking_created_at,
+          },
+          traking.id,
+        ),
       );
     }
 

@@ -6,7 +6,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2017",
+    "target": "ESNext",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
@@ -20,7 +20,9 @@
     "paths": {
       "@app/*": ["./src/app/*"],
       "@test/*": ["./test/*"],
-      "@infra/*": ["src/infra/*"],
+      "@infra/*": [
+        "src/infra/*"
+      ]
     }
   }
 }

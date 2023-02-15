@@ -5,7 +5,7 @@ import { OrderRepository } from '../contracts/order.repository';
 import { OrderAlreadyExistsError } from '@app/services/errors/order-already-exists.error';
 import { DeliveryServiceProvider } from '@app/contracts/traking-finder.provider';
 import { TrakingService } from '@app/services/traking.service';
-import { isAfter, parseISO } from 'date-fns';
+import { isAfter } from 'date-fns';
 import { Traking } from '@app/entities/traking.entity';
 import { MessagingService } from '@app/contracts/messaging.service';
 import { OrderNotFoundError } from '@app/services/errors/order-not-found.error';
@@ -29,7 +29,7 @@ export class OrderService {
 
     if (orderWithTrakingCodeAlreadyExists) throw new OrderAlreadyExistsError();
 
-    const order = new Order({
+    const order = Order.create({
       recipient_id,
       traking_code,
       updated_at: null,
@@ -46,13 +46,12 @@ export class OrderService {
       );
 
     if (hasTrakings.length) {
-      const trakings = hasTrakings.map(
-        (traking) =>
-          new Traking({
-            order_id: order.id,
-            recipient_traking_created_at: traking.date,
-            message: traking.message,
-          }),
+      const trakings = hasTrakings.map((traking) =>
+        Traking.create({
+          order_id: order.id,
+          recipient_traking_created_at: traking.date,
+          message: traking.message,
+        }),
       );
 
       await this.trakingService.createManyTraking(trakings);

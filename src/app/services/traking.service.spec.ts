@@ -16,6 +16,7 @@ describe('TrakingService', () => {
         trakingService.createTraking({
           message: faker.random.words().concat(','),
           order_id: faker.datatype.uuid(),
+          recipient_traking_created_at: faker.date.recent(),
         }),
       ).resolves.toBeUndefined();
     });
