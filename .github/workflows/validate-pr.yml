@@ -1,0 +1,27 @@
+name: "Validate PR"
+
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  validate_tests:
+    name: "Validate build and test"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+      - name: "Setup node action"
+        uses: actions/setup-node@v3
+        with:
+          node-version: "latest"
+      - name: "Install dependencies"
+        run: |
+          yarn install
+      - name: "Run tests"
+        run: |
+          yarn coverage
+      - name: "Validate build"
+        run: |
+          yarn build
