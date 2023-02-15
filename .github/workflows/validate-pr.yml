@@ -7,7 +7,7 @@ on:
 
 jobs:
   validate_tests:
-    name: "Validate build and test"
+    name: "Validate build and test PR event"
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
