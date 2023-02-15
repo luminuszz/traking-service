@@ -13,7 +13,7 @@ export class PrismaTrakingMapper {
   }
 
   static toDomain(traking: PrismaTraking): Traking {
-    return new Traking(
+    return Traking.create(
       {
         message: traking.message,
         recipient_traking_created_at: traking.recipient_traking_created_at,

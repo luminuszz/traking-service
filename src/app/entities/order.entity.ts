@@ -1,5 +1,5 @@
 import { Traking } from '@app/entities/traking.entity';
-import { ObjectId } from 'bson';
+import { Entity } from '@app/entities/entity';
 
 interface OrderProps {
   recipient_id: string;
@@ -10,16 +10,10 @@ interface OrderProps {
   name?: string;
 }
 
-export class Order {
-  public readonly _id: string;
-
+export class Order extends Entity<OrderProps> {
   private readonly _created_at: Date;
 
   private readonly update_at: Date | null;
-
-  constructor(private readonly props: OrderProps, id?: string) {
-    this._id = id || new ObjectId().toString('hex');
-  }
 
   public get traking_code(): string {
     return this.props.traking_code;
@@ -70,4 +64,8 @@ export class Order {
   }
 
   public trakings: Traking[];
+
+  static create(props: OrderProps, id?: string): Order {
+    return new Order(props, id);
+  }
 }

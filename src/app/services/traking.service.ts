@@ -12,7 +12,7 @@ export class TrakingService {
     order_id,
     recipient_traking_created_at,
   }: CreateTrakingDto) {
-    const traking = new Traking({
+    const traking = Traking.create({
       message,
       order_id,
       recipient_traking_created_at,
@@ -23,7 +23,7 @@ export class TrakingService {
 
   async createManyTraking(trakings: CreateTrakingDto[]) {
     const trakingsToSave = trakings.map((traking) => {
-      return new Traking({
+      return Traking.create({
         message: traking.message,
         order_id: traking.order_id,
         recipient_traking_created_at: traking.recipient_traking_created_at,
