@@ -2,7 +2,7 @@ import { ClientKafka } from '@nestjs/microservices';
 import { MessagingService } from '@app/contracts/messaging.service';
 import { ConfigService } from '@nestjs/config';
 import { Injectable, Logger } from '@nestjs/common';
-import { EventBus } from '@app/events/event';
+import { DomainEvent } from '@app/events/event';
 
 @Injectable()
 export class KafkaMessagingService
@@ -33,7 +33,7 @@ export class KafkaMessagingService
     });
   }
 
-  dispatch(event: EventBus<unknown>) {
+  dispatch(event: DomainEvent<unknown>) {
     this.send(event.eventName, event.payload);
   }
 }
