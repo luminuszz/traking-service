@@ -7,8 +7,8 @@ import { DeliveryServiceProvider } from '@app/contracts/traking-finder.provider'
 import { TrakingService } from '@app/services/traking.service';
 import { isAfter } from 'date-fns';
 import { Traking } from '@app/entities/traking.entity';
-import { MessagingService } from '@app/contracts/messaging.service';
 import { OrderNotFoundError } from '@app/services/errors/order-not-found.error';
+import { MessagingService } from '@app/contracts/messaging.service';
 import { NewTrakingCreatedEvent } from '@app/events/new-traking-created.event';
 
 @Injectable()
@@ -89,21 +89,21 @@ export class OrderService {
           recipient_traking_created_at: traking.date,
         });
 
-        this.messagingService.dispatch(
-          new NewTrakingCreatedEvent({
-            date: traking.date,
-            message: traking.message,
-            recipient_id: order.recipient_id,
-            traking_code: order.traking_code,
-            name: order?.name,
-          }),
-        );
-
         if (isDelivered) {
           await this.orderRepository.updateOrder(order_id, {
             isDelivered: true,
           });
         }
+
+        this.messagingService.dispatch(
+          new NewTrakingCreatedEvent({
+            message: traking.message,
+            date: traking.date,
+            name: order.name,
+            recipient_id: order.recipient_id,
+            traking_code: order.traking_code,
+          }),
+        );
       }
 
       return;
@@ -115,21 +115,21 @@ export class OrderService {
       recipient_traking_created_at: traking.date,
     });
 
-    this.messagingService.dispatch(
-      new NewTrakingCreatedEvent({
-        date: traking.date,
-        message: traking.message,
-        recipient_id: order.recipient_id,
-        traking_code: order.traking_code,
-        name: order?.name,
-      }),
-    );
-
     if (isDelivered) {
       await this.orderRepository.updateOrder(order_id, {
         isDelivered: true,
       });
     }
+
+    this.messagingService.dispatch(
+      new NewTrakingCreatedEvent({
+        message: traking.message,
+        date: traking.date,
+        name: order.name,
+        recipient_id: order.recipient_id,
+        traking_code: order.traking_code,
+      }),
+    );
   }
 
   public async findOrderById(order_id: string): Promise<Order | undefined> {

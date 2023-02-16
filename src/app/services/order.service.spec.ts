@@ -409,6 +409,119 @@ describe('OrderService', () => {
 
       expect(order.isDelivered).toBeTruthy();
     });
+
+    it('should be able to notify if it has new traking for order and this order not have trakings', async () => {
+      const orderService = new OrderService(
+        orderRepository,
+        fakeDeliveryServiceProvider,
+        trakingService,
+        fakerMessagingService,
+      );
+
+      const listenNotifyService = vi.spyOn(fakerMessagingService, 'dispatch');
+
+      await orderService.createOrder({
+        traking_code: faker.datatype.uuid(),
+        name: faker.commerce.productName(),
+        recipient_id: faker.datatype.uuid(),
+      });
+
+      const order = orderRepository.orders[0];
+
+      await orderService.refreshOrderTraking(order.id);
+
+      expect(listenNotifyService).toBeCalledTimes(1);
+    });
+
+    it('should be able to notify if it has new traking for order and this order have trakings', async () => {
+      const orderService = new OrderService(
+        orderRepository,
+        fakeDeliveryServiceProvider,
+        trakingService,
+        fakerMessagingService,
+      );
+
+      const listenNotifyService = vi.spyOn(fakerMessagingService, 'dispatch');
+
+      vi.spyOn(
+        fakeDeliveryServiceProvider,
+        'getAllTrakingByTrakingCode',
+      ).mockResolvedValue([
+        {
+          message: 'Objeto em transito',
+          date: subDays(new Date(), 1),
+        },
+      ]);
+
+      await orderService.createOrder({
+        traking_code: faker.datatype.uuid(),
+        name: faker.commerce.productName(),
+        recipient_id: faker.datatype.uuid(),
+      });
+
+      const order = orderRepository.orders[0];
+
+      vi.spyOn(
+        fakeDeliveryServiceProvider,
+        'getMoreRecentTrakingOrder',
+      ).mockResolvedValue({
+        traking: {
+          message: 'Objeto em transito',
+          date: new Date(),
+        },
+        isDelivered: false,
+      });
+
+      await orderService.refreshOrderTraking(order.id);
+
+      expect(listenNotifyService).toBeCalledTimes(1);
+    });
+
+    it('should be able to not notify if not have new trakings', async () => {
+      const orderService = new OrderService(
+        orderRepository,
+        fakeDeliveryServiceProvider,
+        trakingService,
+        fakerMessagingService,
+      );
+
+      const listenNotifyService = vi.spyOn(fakerMessagingService, 'dispatch');
+
+      const lastDay = subDays(new Date(), 1);
+
+      vi.spyOn(
+        fakeDeliveryServiceProvider,
+        'getAllTrakingByTrakingCode',
+      ).mockResolvedValue([
+        {
+          message: 'Objeto em transito',
+          date: lastDay,
+        },
+      ]);
+
+      await orderService.createOrder({
+        traking_code: faker.datatype.uuid(),
+        name: faker.commerce.productName(),
+        recipient_id: faker.datatype.uuid(),
+      });
+
+      const order = orderRepository.orders[0];
+
+      vi.spyOn(
+        fakeDeliveryServiceProvider,
+        'getMoreRecentTrakingOrder',
+      ).mockResolvedValue({
+        traking: {
+          message: 'Objeto em transito',
+          date: lastDay,
+        },
+        isDelivered: false,
+      });
+
+      await orderService.refreshOrderTraking(order.id);
+
+      expect(listenNotifyService).toBeCalledTimes(0);
+    });
   });
 
   describe('findOrderById', () => {

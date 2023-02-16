@@ -1,4 +1,4 @@
-import { EventBus } from '@app/events/event';
+import { DomainEvent } from '@app/events/event';
 
 type NewTrakingCreatedEventProps = {
   date: Date;
@@ -8,6 +8,6 @@ type NewTrakingCreatedEventProps = {
   name: string;
 };
 
-export class NewTrakingCreatedEvent extends EventBus<NewTrakingCreatedEventProps> {
+export class NewTrakingCreatedEvent extends DomainEvent<NewTrakingCreatedEventProps> {
   public eventName = 'notification.update-order-status';
 }

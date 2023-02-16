@@ -1,4 +1,4 @@
-export abstract class EventBus<EventPayload> {
+export abstract class DomainEvent<EventPayload> {
   public abstract eventName: string;
 
   public payload: EventPayload;
