@@ -8,9 +8,7 @@ import { PrismaOrderMapper } from '@infra/database/prisma/mappers/prisma-order.m
 export class PrismaOrderRepository implements OrderRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findOrderByTrakingCode(
-    traking_code: string,
-  ): Promise<Order | undefined> {
+  async findOrderByTrakingCode(traking_code: string): Promise<Order | undefined> {
     const order = await this.prismaService.order.findUnique({
       where: {
         traking_id: traking_code,
@@ -51,6 +49,7 @@ export class PrismaOrderRepository implements OrderRepository {
       where: {
         id: order_id,
       },
+
       data: {
         isDelivered: order?.isDelivered,
         recipient_id: order?.recipient_id,
@@ -78,8 +77,6 @@ export class PrismaOrderRepository implements OrderRepository {
       },
     });
 
-    return orders.map((order) =>
-      PrismaOrderMapper.toDomain(order, order.trakings),
-    );
+    return orders.map((order) => PrismaOrderMapper.toDomain(order, order.trakings));
   }
 }

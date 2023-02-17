@@ -20,13 +20,8 @@ export class OrderService {
     private readonly messagingService: MessagingService,
   ) {}
 
-  public async createOrder({
-    recipient_id,
-    traking_code,
-    name,
-  }: CreateOrderDto) {
-    const orderWithTrakingCodeAlreadyExists =
-      await this.orderRepository.findOrderByTrakingCode(traking_code);
+  public async createOrder({ recipient_id, traking_code, name }: CreateOrderDto) {
+    const orderWithTrakingCodeAlreadyExists = await this.orderRepository.findOrderByTrakingCode(traking_code);
 
     if (orderWithTrakingCodeAlreadyExists) throw new OrderAlreadyExistsError();
 
@@ -41,10 +36,7 @@ export class OrderService {
 
     await this.orderRepository.save(order);
 
-    const hasTrakings =
-      await this.deliveryServiceProvider.getAllTrakingByTrakingCode(
-        order.traking_code,
-      );
+    const hasTrakings = await this.deliveryServiceProvider.getAllTrakingByTrakingCode(order.traking_code);
 
     if (hasTrakings.length) {
       const trakings = hasTrakings.map((traking) =>
@@ -65,14 +57,11 @@ export class OrderService {
     if (!order) throw new OrderNotFoundError();
 
     const lastTrakingRegistredByDeliveryProvider =
-      await this.deliveryServiceProvider.getMoreRecentTrakingOrder(
-        order.traking_code,
-      );
+      await this.deliveryServiceProvider.getMoreRecentTrakingOrder(order.traking_code);
 
     if (!lastTrakingRegistredByDeliveryProvider) return;
 
-    const lastTrakingRegistredByOrderId =
-      await this.trakingService.findMoreRecentTrakingByOrderId(order.id);
+    const lastTrakingRegistredByOrderId = await this.trakingService.findMoreRecentTrakingByOrderId(order.id);
 
     const { traking, isDelivered } = lastTrakingRegistredByDeliveryProvider;
 
