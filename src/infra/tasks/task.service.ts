@@ -12,8 +12,7 @@ export class TaskService {
   async refreshOrderStatus() {
     this.logger.log('Refresh order status task init');
 
-    const orders =
-      await this.orderService.findAllOrdersThatNotHaveBeenDelivered();
+    const orders = await this.orderService.findAllOrdersThatNotHaveBeenDelivered();
 
     if (!orders.length) return this.logger.log('No orders to update');
 

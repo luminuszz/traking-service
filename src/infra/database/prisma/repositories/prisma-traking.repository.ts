@@ -31,9 +31,7 @@ export class PrismaTrakingRepository implements TrakingRepository {
     });
   }
 
-  async findMoreRecentTrakingWithOrder_id(
-    order_id: string,
-  ): Promise<Traking | null> {
+  async findMoreRecentTrakingWithOrder_id(order_id: string): Promise<Traking | null> {
     const results = await this.prisma.traking.findMany({
       where: {
         order_id,
@@ -41,10 +39,7 @@ export class PrismaTrakingRepository implements TrakingRepository {
     });
 
     const [traking] = results.sort((a, b) =>
-      compareDesc(
-        a.recipient_traking_created_at,
-        b.recipient_traking_created_at,
-      ),
+      compareDesc(a.recipient_traking_created_at, b.recipient_traking_created_at),
     );
 
     return traking ? PrismaTrakingMapper.toDomain(traking) : null;

@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  CallHandler,
-  ExecutionContext,
-  Logger,
-  NestInterceptor,
-} from '@nestjs/common';
+import { BadRequestException, CallHandler, ExecutionContext, Logger, NestInterceptor } from '@nestjs/common';
 import { catchError, Observable } from 'rxjs';
 
 const isPrismaDatabaseError = (error: unknown): boolean => {
@@ -21,10 +15,7 @@ const isPrismaDatabaseError = (error: unknown): boolean => {
 export class PrismaErrorInterceptor implements NestInterceptor {
   private logger = new Logger(PrismaErrorInterceptor.name);
 
-  intercept(
-    context: ExecutionContext,
-    next: CallHandler<any>,
-  ): Observable<any> | Promise<Observable<any>> {
+  intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(
       catchError((error) => {
         if (isPrismaDatabaseError(error)) {

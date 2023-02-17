@@ -1,15 +1,9 @@
-import {
-  Order as PrismaOrder,
-  Traking as PrismaTrakings,
-} from '@prisma/client';
+import { Order as PrismaOrder, Traking as PrismaTrakings } from '@prisma/client';
 import { Order } from '@app/entities/order.entity';
 import { Traking } from '@app/entities/traking.entity';
 
 export class PrismaOrderMapper {
-  static toDomain(
-    prismaOrder: PrismaOrder,
-    trakings?: PrismaTrakings[],
-  ): Order {
+  static toDomain(prismaOrder: PrismaOrder, trakings?: PrismaTrakings[]): Order {
     const domainOrder = Order.create(
       {
         isDelivered: prismaOrder.isDelivered,
