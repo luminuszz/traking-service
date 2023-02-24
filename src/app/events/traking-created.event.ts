@@ -8,6 +8,6 @@ type NewTrakingCreatedEventProps = {
   name: string;
 };
 
-export class NewTrakingCreatedEvent extends DomainEvent<NewTrakingCreatedEventProps> {
+export class TrakingCreatedEvent extends DomainEvent<NewTrakingCreatedEventProps> {
   public eventName = 'notification.update-order-status';
 }

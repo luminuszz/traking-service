@@ -9,7 +9,8 @@ import { isAfter } from 'date-fns';
 import { Traking } from '@app/entities/traking.entity';
 import { OrderNotFoundError } from '@app/services/errors/order-not-found.error';
 import { MessagingService } from '@app/contracts/messaging.service';
-import { NewTrakingCreatedEvent } from '@app/events/new-traking-created.event';
+import { TrakingCreatedEvent } from '@app/events/traking-created.event';
+import { OrderCreatedEvent } from '@app/events/order-created.event';
 
 @Injectable()
 export class OrderService {
@@ -35,6 +36,8 @@ export class OrderService {
     });
 
     await this.orderRepository.save(order);
+
+    this.messagingService.dispatch(new OrderCreatedEvent({ order: order }));
 
     const hasTrakings = await this.deliveryServiceProvider.getAllTrakingByTrakingCode(order.traking_code);
 
@@ -85,7 +88,7 @@ export class OrderService {
         }
 
         this.messagingService.dispatch(
-          new NewTrakingCreatedEvent({
+          new TrakingCreatedEvent({
             message: traking.message,
             date: traking.date,
             name: order.name,
@@ -111,7 +114,7 @@ export class OrderService {
     }
 
     this.messagingService.dispatch(
-      new NewTrakingCreatedEvent({
+      new TrakingCreatedEvent({
         message: traking.message,
         date: traking.date,
         name: order.name,
