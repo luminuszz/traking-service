@@ -2,7 +2,7 @@ import { Traking } from '@app/entities/traking.entity';
 import { TrakingService } from '@app/services/traking.service';
 import { faker } from '@faker-js/faker';
 import { InMemoryTrakingRepository } from '@test/repositories/in-memory-traking.repository';
-import { isEqual } from 'date-fns';
+import { isEqual, subDays } from 'date-fns';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('TrakingService', () => {
@@ -61,19 +61,20 @@ describe('TrakingService', () => {
       const moreRecentTraking = Traking.create({
         message: faker.lorem.sentence(),
         order_id,
-        recipient_traking_created_at: faker.date.recent(1, today),
+        recipient_traking_created_at: today,
       });
 
       const oldTraking = Traking.create({
         message: faker.lorem.sentence(),
         order_id,
-        recipient_traking_created_at: faker.date.recent(3, today),
+        recipient_traking_created_at: subDays(today, 1),
       });
 
       await trakingService.createManyTraking([moreRecentTraking, oldTraking]);
 
       const response = await trakingService.findMoreRecentTrakingByOrderId(order_id);
 
+      expect(response.recipient_traking_created_at).toBe(moreRecentTraking.recipient_traking_created_at);
       expect(response.message).toBe(moreRecentTraking.message);
       expect(response.order_id).toBe(moreRecentTraking.order_id);
       expect(response.recipient_traking_created_at).not.toBe(oldTraking.recipient_traking_created_at);
