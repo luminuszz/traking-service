@@ -1,9 +1,9 @@
-import { expect, it, describe, beforeEach } from 'vitest';
-import { TrakingService } from '@app/services/traking.service';
-import { InMemoryTrakingRepository } from '@test/repositories/in-memory-traking.repository';
-import { faker } from '@faker-js/faker';
 import { Traking } from '@app/entities/traking.entity';
-import { subDays, isEqual } from 'date-fns';
+import { TrakingService } from '@app/services/traking.service';
+import { faker } from '@faker-js/faker';
+import { InMemoryTrakingRepository } from '@test/repositories/in-memory-traking.repository';
+import { isEqual, subDays } from 'date-fns';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('TrakingService', () => {
   let trakingRepository: InMemoryTrakingRepository;
@@ -61,13 +61,13 @@ describe('TrakingService', () => {
       const moreRecentTraking = Traking.create({
         message: faker.lorem.sentence(),
         order_id,
-        recipient_traking_created_at: faker.date.recent(1, today),
+        recipient_traking_created_at: today,
       });
 
       const oldTraking = Traking.create({
         message: faker.lorem.sentence(),
         order_id,
-        recipient_traking_created_at: faker.date.recent(3, today),
+        recipient_traking_created_at: subDays(today, 1),
       });
 
       await trakingService.createManyTraking([moreRecentTraking, oldTraking]);
