@@ -423,7 +423,7 @@ describe('OrderService', () => {
 
         await orderService.refreshOrderTraking(order.id);
 
-        expect(listenNotifyService).toBeCalledTimes(2);
+        expect(listenNotifyService).toBeCalledTimes(3);
       });
 
       it('should be able to not notify if not have new trakings', async () => {
@@ -463,7 +463,7 @@ describe('OrderService', () => {
 
         await orderService.refreshOrderTraking(order.id);
 
-        expect(listenNotifyService).toBeCalledTimes(1);
+        expect(listenNotifyService).toBeCalledTimes(2);
       });
     });
 

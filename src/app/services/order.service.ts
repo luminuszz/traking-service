@@ -51,6 +51,21 @@ export class OrderService {
       );
 
       await this.trakingService.createManyTraking(trakings);
+
+      trakings.forEach((item) => {
+        this.messagingService.dispatch(
+          new TrakingCreatedEvent({
+            message: item.message,
+            date: item.recipient_traking_created_at,
+            name: order.name,
+            recipient_id: order.recipient_id,
+            traking_code: order.traking_code,
+          }),
+        );
+      });
+
+        
+
     }
   }
 
