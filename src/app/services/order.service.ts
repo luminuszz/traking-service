@@ -1,15 +1,16 @@
+import { MessagingService } from '@app/contracts/messaging.service';
+import { DeliveryServiceProvider } from '@app/contracts/traking-finder.provider';
+import { Traking } from '@app/entities/traking.entity';
+import { OrderCreatedEvent } from '@app/events/order-created.event';
+import { TrakingCreatedEvent } from '@app/events/traking-created.event';
+import { OrderAlreadyExistsError } from '@app/services/errors/order-already-exists.error';
+import { OrderNotFoundError } from '@app/services/errors/order-not-found.error';
+import { TrakingService } from '@app/services/traking.service';
+import { Injectable } from '@nestjs/common';
+import { isAfter } from 'date-fns';
+import { OrderRepository } from '../contracts/order.repository';
 import { CreateOrderDto } from '../dto/create-order.dto';
 import { Order } from '../entities/order.entity';
-import { Injectable } from '@nestjs/common';
-import { OrderRepository } from '../contracts/order.repository';
-import { OrderAlreadyExistsError } from '@app/services/errors/order-already-exists.error';
-import { DeliveryServiceProvider } from '@app/contracts/traking-finder.provider';
-import { TrakingService } from '@app/services/traking.service';
-import { isAfter } from 'date-fns';
-import { Traking } from '@app/entities/traking.entity';
-import { OrderNotFoundError } from '@app/services/errors/order-not-found.error';
-import { MessagingService } from '@app/contracts/messaging.service';
-import { NewTrakingCreatedEvent } from '@app/events/new-traking-created.event';
 
 @Injectable()
 export class OrderService {
@@ -35,6 +36,8 @@ export class OrderService {
     });
 
     await this.orderRepository.save(order);
+
+    this.messagingService.dispatch(new OrderCreatedEvent({ order: order }));
 
     const hasTrakings = await this.deliveryServiceProvider.getAllTrakingByTrakingCode(order.traking_code);
 
@@ -85,7 +88,7 @@ export class OrderService {
         }
 
         this.messagingService.dispatch(
-          new NewTrakingCreatedEvent({
+          new TrakingCreatedEvent({
             message: traking.message,
             date: traking.date,
             name: order.name,
@@ -94,31 +97,31 @@ export class OrderService {
           }),
         );
       }
-
-      return;
-    }
-
-    await this.trakingService.createTraking({
-      order_id,
-      message: traking.message,
-      recipient_traking_created_at: traking.date,
-    });
-
-    if (isDelivered) {
-      await this.orderRepository.updateOrder(order_id, {
-        isDelivered: true,
-      });
-    }
-
-    this.messagingService.dispatch(
-      new NewTrakingCreatedEvent({
+    } else {
+      await this.trakingService.createTraking({
+        order_id,
         message: traking.message,
-        date: traking.date,
-        name: order.name,
-        recipient_id: order.recipient_id,
-        traking_code: order.traking_code,
-      }),
-    );
+        recipient_traking_created_at: traking.date,
+      });
+
+      if (isDelivered) {
+        await this.orderRepository.updateOrder(order_id, {
+          isDelivered: true,
+        });
+      }
+
+      this.messagingService.dispatch(
+        new TrakingCreatedEvent({
+          message: traking.message,
+          date: traking.date,
+          name: order.name,
+          recipient_id: order.recipient_id,
+          traking_code: order.traking_code,
+        }),
+      );
+    }
+
+    
   }
 
   public async findOrderById(order_id: string): Promise<Order | undefined> {

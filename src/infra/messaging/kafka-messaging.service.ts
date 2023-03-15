@@ -1,14 +1,11 @@
-import { ClientKafka } from '@nestjs/microservices';
 import { MessagingService } from '@app/contracts/messaging.service';
-import { ConfigService } from '@nestjs/config';
-import { Injectable, Logger } from '@nestjs/common';
 import { DomainEvent } from '@app/events/event';
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { ClientKafka } from '@nestjs/microservices';
 
 @Injectable()
-export class KafkaMessagingService
-  extends ClientKafka
-  implements MessagingService
-{
+export class KafkaMessagingService extends ClientKafka implements MessagingService {
   public logger = new Logger(KafkaMessagingService.name);
 
   constructor(private readonly config: ConfigService) {
@@ -34,6 +31,6 @@ export class KafkaMessagingService
   }
 
   dispatch(event: DomainEvent<unknown>) {
-    this.send(event.eventName, event.payload);
+    this.emit(event.eventName, event.payload);
   }
 }

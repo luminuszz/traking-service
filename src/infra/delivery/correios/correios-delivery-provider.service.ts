@@ -5,7 +5,7 @@ import {
 } from '@app/contracts/traking-finder.provider';
 import { Injectable } from '@nestjs/common';
 
-import * as correiosBrasil from 'correios-brasil';
+import { rastrearEncomendas } from 'correios-brasil';
 import { compareDesc, parseISO } from 'date-fns';
 import { CorreiosExceptionFilter } from './correios-service.filter';
 
@@ -24,13 +24,9 @@ type TrakingOrderResponseDto = {
 
 @Injectable()
 export class CorreiosDeliveryProviderService implements DeliveryServiceProvider {
-  private readonly correiosBrasilProvider = correiosBrasil;
-
   async getMoreRecentTrakingOrder(traking_code: string): Promise<TrakingWithStatus | null> {
     try {
-      const [response] = (await this.correiosBrasilProvider.rastrearEncomendas([
-        traking_code,
-      ])) as TrakingOrderResponseDto[];
+      const [response] = (await rastrearEncomendas([traking_code])) as TrakingOrderResponseDto[];
 
       if (!response?.eventos?.length) return null;
 
@@ -59,7 +55,7 @@ export class CorreiosDeliveryProviderService implements DeliveryServiceProvider 
 
   async getAllTrakingByTrakingCode(traking_code: string): Promise<DeliveryTraking[]> {
     try {
-      const [response] = await this.correiosBrasilProvider.rastrearEncomendas([traking_code]);
+      const [response] = await rastrearEncomendas([traking_code]);
 
       return (
         response?.eventos?.map((traking) => ({
