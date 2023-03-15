@@ -97,31 +97,31 @@ export class OrderService {
           }),
         );
       }
-
-      return;
-    }
-
-    await this.trakingService.createTraking({
-      order_id,
-      message: traking.message,
-      recipient_traking_created_at: traking.date,
-    });
-
-    if (isDelivered) {
-      await this.orderRepository.updateOrder(order_id, {
-        isDelivered: true,
-      });
-    }
-
-    this.messagingService.dispatch(
-      new TrakingCreatedEvent({
+    } else {
+      await this.trakingService.createTraking({
+        order_id,
         message: traking.message,
-        date: traking.date,
-        name: order.name,
-        recipient_id: order.recipient_id,
-        traking_code: order.traking_code,
-      }),
-    );
+        recipient_traking_created_at: traking.date,
+      });
+
+      if (isDelivered) {
+        await this.orderRepository.updateOrder(order_id, {
+          isDelivered: true,
+        });
+      }
+
+      this.messagingService.dispatch(
+        new TrakingCreatedEvent({
+          message: traking.message,
+          date: traking.date,
+          name: order.name,
+          recipient_id: order.recipient_id,
+          traking_code: order.traking_code,
+        }),
+      );
+    }
+
+    
   }
 
   public async findOrderById(order_id: string): Promise<Order | undefined> {
