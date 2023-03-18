@@ -2,6 +2,7 @@ version: "3.7"
 
 services:
   traking_service:
+    
     restart: always
     container_name: traking_service
     build:
@@ -11,3 +12,6 @@ services:
       - .:/app
       - /app/node_modules
 
+networks:
+  defalt:
+    driver: bridge
