@@ -17,6 +17,14 @@ type TrakingOrderResponseDto = {
       endereco: {
         cidade: string;
         uf: string;
+        pais: string;
+      };
+    };
+    unidadeDestino?: {
+      endereco: {
+        cidade: string;
+        uf: string;
+        pais: string;
       };
     };
   }[];
@@ -38,9 +46,22 @@ export class CorreiosDeliveryProviderService implements DeliveryServiceProvider 
       ${traking.unidade?.endereco?.cidade || ''} - ${traking?.unidade?.endereco?.uf || ''}
     `;
 
+      const description = traking.unidade
+        ? `Unidade: ${traking.unidade.endereco.cidade ?? traking.unidade.endereco.pais} - ${
+            traking.unidade.endereco.uf ?? ''
+          } ${
+            traking?.unidadeDestino
+              ? `
+        para a unidade ${traking?.unidadeDestino?.endereco?.cidade} - ${traking?.unidadeDestino?.endereco?.uf}
+      `
+              : ''
+          }`
+        : '';
+
       return {
         traking: {
           message,
+          description,
           date: parseISO(traking.dtHrCriado),
         },
 
@@ -58,10 +79,25 @@ export class CorreiosDeliveryProviderService implements DeliveryServiceProvider 
       const [response] = await rastrearEncomendas([traking_code]);
 
       return (
-        response?.eventos?.map((traking) => ({
-          message: traking.descricao,
-          date: parseISO(traking.dtHrCriado),
-        })) || []
+        response?.eventos?.map((traking) => {
+          const description = traking.unidade
+            ? `Unidade: ${traking?.unidade?.endereco?.cidade ?? traking.unidade.endereco.pais} - ${
+                traking.unidade.endereco.uf
+              } ${
+                traking?.unidadeDestino
+                  ? `
+              para a unidade ${traking?.unidadeDestino?.endereco?.cidade} - ${traking?.unidadeDestino?.endereco?.uf}
+      `
+                  : ''
+              }`
+            : '';
+
+          return {
+            message: traking.descricao,
+            date: parseISO(traking.dtHrCriado),
+            description,
+          };
+        }) || []
       );
     } catch (e) {
       if (e instanceof Error) {

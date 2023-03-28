@@ -1,6 +1,5 @@
 import { MessagingService } from '@app/contracts/messaging.service';
 import { DeliveryServiceProvider } from '@app/contracts/traking-finder.provider';
-import { Traking } from '@app/entities/traking.entity';
 import { OrderCreatedEvent } from '@app/events/order-created.event';
 import { TrakingCreatedEvent } from '@app/events/traking-created.event';
 import { OrderAlreadyExistsError } from '@app/services/errors/order-already-exists.error';
@@ -38,35 +37,6 @@ export class OrderService {
     await this.orderRepository.save(order);
 
     this.messagingService.dispatch(new OrderCreatedEvent({ order: order }));
-
-    const hasTrakings = await this.deliveryServiceProvider.getAllTrakingByTrakingCode(order.traking_code);
-
-    if (hasTrakings.length) {
-      const trakings = hasTrakings.map((traking) =>
-        Traking.create({
-          order_id: order.id,
-          recipient_traking_created_at: traking.date,
-          message: traking.message,
-        }),
-      );
-
-      await this.trakingService.createManyTraking(trakings);
-
-      trakings.forEach((item) => {
-        this.messagingService.dispatch(
-          new TrakingCreatedEvent({
-            message: item.message,
-            date: item.recipient_traking_created_at,
-            name: order.name,
-            recipient_id: order.recipient_id,
-            traking_code: order.traking_code,
-          }),
-        );
-      });
-
-        
-
-    }
   }
 
   public async refreshOrderTraking(order_id: string): Promise<void> {
@@ -109,6 +79,7 @@ export class OrderService {
             name: order.name,
             recipient_id: order.recipient_id,
             traking_code: order.traking_code,
+            description: traking.description,
           }),
         );
       }
@@ -132,11 +103,10 @@ export class OrderService {
           name: order.name,
           recipient_id: order.recipient_id,
           traking_code: order.traking_code,
+          description: traking.description,
         }),
       );
     }
-
-    
   }
 
   public async findOrderById(order_id: string): Promise<Order | undefined> {

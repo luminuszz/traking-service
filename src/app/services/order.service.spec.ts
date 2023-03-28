@@ -85,39 +85,6 @@ describe('OrderService', () => {
           }),
         ).rejects.toBeInstanceOf(OrderAlreadyExistsError);
       });
-
-      it('create a new order with trakings', async () => {
-        const orderService = new OrderService(
-          orderRepository,
-          fakeDeliveryServiceProvider,
-          trakingService,
-          fakerMessagingService,
-        );
-
-        // emule deliveryServiceReturn trakings
-
-        const trakings = [
-          {
-            message: faker.lorem.sentence(),
-            date: faker.datatype.datetime(),
-          },
-          {
-            message: faker.lorem.sentence(),
-            date: faker.datatype.datetime(),
-          },
-        ];
-
-        vi.spyOn(fakeDeliveryServiceProvider, 'getAllTrakingByTrakingCode').mockResolvedValue(trakings);
-
-        await orderService.createOrder({
-          traking_code: faker.datatype.string(),
-          recipient_id: faker.datatype.uuid(),
-        });
-
-        expect(trakingRepository).toHaveProperty('trackings');
-        expect(trakingRepository.trackings).toHaveLength(2);
-        expect(trakingRepository.trackings[0]).toHaveProperty('message');
-      });
     });
 
     describe('findAllOrdersThatNotHaveBeenDelivered', () => {
@@ -423,7 +390,7 @@ describe('OrderService', () => {
 
         await orderService.refreshOrderTraking(order.id);
 
-        expect(listenNotifyService).toBeCalledTimes(3);
+        expect(listenNotifyService).toBeCalledTimes(2);
       });
 
       it('should be able to not notify if not have new trakings', async () => {

@@ -6,6 +6,7 @@ type NewTrakingCreatedEventProps = {
   recipient_id: string;
   traking_code: string;
   name: string;
+  description: string | null;
 };
 
 export class TrakingCreatedEvent extends DomainEvent<NewTrakingCreatedEventProps> {

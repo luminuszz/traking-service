@@ -2,6 +2,7 @@ export interface TrakingWithStatus {
   traking: {
     message: string;
     date: Date;
+    description?: string;
   };
   isDelivered: boolean;
 }
@@ -9,6 +10,7 @@ export interface TrakingWithStatus {
 export interface DeliveryTraking {
   message: string;
   date: Date;
+  description?: string;
 }
 
 export abstract class DeliveryServiceProvider {

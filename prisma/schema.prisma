@@ -30,6 +30,7 @@ model Traking {
   order_id                     String   @db.ObjectId
   recipient_traking_created_at DateTime
   message                      String
+  description                  String  @default("")
 
   order Order @relation(fields: [order_id], references: [id])
 }

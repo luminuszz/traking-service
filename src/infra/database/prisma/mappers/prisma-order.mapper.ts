@@ -1,6 +1,6 @@
-import { Order as PrismaOrder, Traking as PrismaTrakings } from '@prisma/client';
 import { Order } from '@app/entities/order.entity';
 import { Traking } from '@app/entities/traking.entity';
+import { Order as PrismaOrder, Traking as PrismaTrakings } from '@prisma/client';
 
 export class PrismaOrderMapper {
   static toDomain(prismaOrder: PrismaOrder, trakings?: PrismaTrakings[]): Order {
@@ -23,6 +23,7 @@ export class PrismaOrderMapper {
             order_id: traking.order_id,
             message: traking.message,
             recipient_traking_created_at: traking.recipient_traking_created_at,
+            description: traking?.description || '',
           },
           traking.id,
         ),

@@ -6,10 +6,15 @@ interface TrakingProps {
   order_id: string;
   message: string;
   recipient_traking_created_at: Date;
+  description: string | null;
 }
 
 export class Traking extends Entity<TrakingProps> {
   public Order: Order;
+
+  public get description(): string | null {
+    return this.props.description;
+  }
 
   public get id(): string {
     return this._id;

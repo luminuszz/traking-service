@@ -9,6 +9,7 @@ export class PrismaTrakingMapper {
       recipient_traking_created_at: traking.recipient_traking_created_at,
       order_id: traking.order_id,
       id: traking.id,
+      description: traking.description ?? '',
     };
   }
 
@@ -18,6 +19,7 @@ export class PrismaTrakingMapper {
         message: traking.message,
         recipient_traking_created_at: traking.recipient_traking_created_at,
         order_id: traking.order_id,
+        description: traking.description ?? null,
       },
       traking.id,
     );

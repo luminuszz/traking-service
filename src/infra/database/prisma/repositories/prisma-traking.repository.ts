@@ -1,8 +1,8 @@
 import { TrakingRepository } from '@app/contracts/traking.repository';
-import { Injectable } from '@nestjs/common';
 import { Traking } from '@app/entities/traking.entity';
-import { PrismaService } from '@infra/database/prisma/prisma.service';
 import { PrismaTrakingMapper } from '@infra/database/prisma/mappers/prisma-traking.mapper';
+import { PrismaService } from '@infra/database/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
 import { compareDesc } from 'date-fns';
 
 @Injectable()
@@ -15,6 +15,7 @@ export class PrismaTrakingRepository implements TrakingRepository {
         order_id: traking.order_id,
         message: traking.message,
         recipient_traking_created_at: traking.recipient_traking_created_at,
+        description: traking.description ?? '',
       },
     });
   }
@@ -24,6 +25,7 @@ export class PrismaTrakingRepository implements TrakingRepository {
       message: traking.message,
       recipient_traking_created_at: traking.recipient_traking_created_at,
       order_id: traking.order_id,
+      description: traking?.description ?? '',
     }));
 
     await this.prisma.traking.createMany({
