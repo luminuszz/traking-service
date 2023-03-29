@@ -64,6 +64,7 @@ export class OrderService {
           order_id,
           message: traking.message,
           recipient_traking_created_at: traking.date,
+          description: traking.description,
         });
 
         if (isDelivered) {
@@ -88,6 +89,7 @@ export class OrderService {
         order_id,
         message: traking.message,
         recipient_traking_created_at: traking.date,
+        description: traking.description,
       });
 
       if (isDelivered) {

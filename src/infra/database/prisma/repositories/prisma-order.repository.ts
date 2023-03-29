@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
 import { OrderRepository } from '@app/contracts/order.repository';
-import { PrismaService } from '@infra/database/prisma/prisma.service';
 import { Order } from '@app/entities/order.entity';
 import { PrismaOrderMapper } from '@infra/database/prisma/mappers/prisma-order.mapper';
+import { PrismaService } from '@infra/database/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class PrismaOrderRepository implements OrderRepository {
@@ -65,9 +65,12 @@ export class PrismaOrderRepository implements OrderRepository {
       where: {
         isDelivered: false,
       },
+      include: {
+        trakings: true,
+      },
     });
 
-    return orders.map((order) => PrismaOrderMapper.toDomain(order));
+    return orders.map((order) => PrismaOrderMapper.toDomain(order, order.trakings));
   }
 
   async findAllOrders(): Promise<Order[]> {

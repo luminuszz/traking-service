@@ -1,6 +1,7 @@
 import { Order } from '@app/entities/order.entity';
 import { Traking } from '@app/entities/traking.entity';
 import { Order as PrismaOrder, Traking as PrismaTrakings } from '@prisma/client';
+import { compareAsc } from 'date-fns';
 
 export class PrismaOrderMapper {
   static toDomain(prismaOrder: PrismaOrder, trakings?: PrismaTrakings[]): Order {
@@ -17,17 +18,19 @@ export class PrismaOrderMapper {
     );
 
     if (trakings) {
-      domainOrder.trakings = trakings.map<Traking>((traking) =>
-        Traking.create(
-          {
-            order_id: traking.order_id,
-            message: traking.message,
-            recipient_traking_created_at: traking.recipient_traking_created_at,
-            description: traking?.description || '',
-          },
-          traking.id,
-        ),
-      );
+      domainOrder.trakings = trakings
+        .map<Traking>((traking) =>
+          Traking.create(
+            {
+              order_id: traking.order_id,
+              message: traking.message,
+              recipient_traking_created_at: traking.recipient_traking_created_at,
+              description: traking?.description || '',
+            },
+            traking.id,
+          ),
+        )
+        .sort((a, b) => compareAsc(a.recipient_traking_created_at, b.recipient_traking_created_at));
     }
 
     return domainOrder;
